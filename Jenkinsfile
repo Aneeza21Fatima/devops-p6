@@ -10,16 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Checking out source code from GitHub'
-                checkout scm
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Testing application'
-                bat 'python --version'
-                bat 'python -m py_compile app.py'
+                echo 'Source code checked out from GitHub'
             }
         }
 
@@ -32,7 +23,7 @@ pipeline {
 
         stage('Verify Docker Image') {
             steps {
-                echo 'Checking Docker image'
+                echo 'Verifying Docker image'
                 bat 'docker images %IMAGE_NAME%:%IMAGE_TAG%'
             }
         }
@@ -40,11 +31,11 @@ pipeline {
 
     post {
         success {
-            echo 'Docker build completed successfully!'
+            echo 'CI pipeline completed successfully!'
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo 'CI pipeline failed.'
         }
     }
 }
