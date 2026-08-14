@@ -1,23 +1,50 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "devops-webapp"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'Git checkout stage'
+                echo 'Checking out source code from GitHub'
+                checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Test') {
             steps {
-                echo 'Build stage'
+                echo 'Testing application'
+                bat 'python --version'
+                bat 'python -m py_compile app.py'
             }
         }
 
-        stage('Docker') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Docker stage'
+                echo 'Building Docker image'
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+            }
+        }
+
+        stage('Verify Docker Image') {
+            steps {
+                echo 'Checking Docker image'
+                bat 'docker images %IMAGE_NAME%:%IMAGE_TAG%'
             }
         }
     }
-}git 
+
+    post {
+        success {
+            echo 'Docker build completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
