@@ -1,9 +1,14 @@
-FROM python:3.12-slim
+from flask import Flask
 
-WORKDIR /app
+app = Flask(__name__)
 
-COPY app.py .
+@app.route("/")
+def home():
+    return "Hello from DevOps Application - Version 1"
 
-EXPOSE 5000
+@app.route("/health")
+def health():
+    return "OK"
 
-CMD ["python", "app.py"]
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
